@@ -21,5 +21,4 @@ public class ElfCalories {
         .limit(3)
         .reduce(0, Integer::sum);
   }
-
 }
