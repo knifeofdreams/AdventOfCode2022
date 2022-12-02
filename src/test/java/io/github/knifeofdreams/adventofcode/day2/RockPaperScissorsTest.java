@@ -12,23 +12,21 @@ import org.junit.jupiter.api.Test;
 
 class RockPaperScissorsTest {
 
+  private static final List<List<String>> HANDS_EXAMPLE = List.of(List.of("A", "Y"), List.of("B", "X"), List.of("C", "Z"));
+  private static final List<List<String>> HANDS = readInput();
+
+  private RockPaperScissors rockPaperScissors = new RockPaperScissors();
+
   @Nested
   class FirstScoreCalculation {
     @Test
     public void calculateScore() {
-      var shapes = List.of(
-          List.of("A", "Y"),
-          List.of("B", "X"),
-          List.of("C", "Z"));
-      var rockPaperScissors = new RockPaperScissors();
-      assertEquals(15, rockPaperScissors.totalScore(shapes));
+      assertEquals(15, rockPaperScissors.totalScore(HANDS_EXAMPLE));
     }
 
     @Test
     public void calculateScoreForMyInput() {
-      var shapes = readInput();
-      var rockPaperScissors = new RockPaperScissors();
-      assertEquals(13675, rockPaperScissors.totalScore(shapes));
+      assertEquals(13675, rockPaperScissors.totalScore(HANDS));
     }
   }
 
@@ -36,25 +34,21 @@ class RockPaperScissorsTest {
   class SecondScoreCalculation {
     @Test
     public void calculateScore() {
-      var shapes = List.of(
-          List.of("A", "Y"),
-          List.of("B", "X"),
-          List.of("C", "Z"));
-      var rockPaperScissors = new RockPaperScissors();
-      assertEquals(12, rockPaperScissors.totalCorrectScore(shapes));
+      assertEquals(12, rockPaperScissors.totalCorrectScore(HANDS_EXAMPLE));
     }
 
     @Test
     public void calculateScoreForMyInput() {
-      var shapes = readInput();
-      var rockPaperScissors = new RockPaperScissors();
-      assertEquals(14184, rockPaperScissors.totalCorrectScore(shapes));
+      assertEquals(14184, rockPaperScissors.totalCorrectScore(HANDS));
     }
   }
 
-  private List<List<String>> readInput() {
-    try (Stream<String> input = Files.lines(Path.of(ClassLoader.getSystemResource("day2/day2-input.txt").toURI()))) {
-      return input.map(line -> List.of(line.substring(0, 1), line.substring(2))).collect(Collectors.toList());
+  private static List<List<String>> readInput() {
+    try (Stream<String> input =
+        Files.lines(Path.of(ClassLoader.getSystemResource("day2/day2-input.txt").toURI()))) {
+      return input
+          .map(line -> List.of(line.substring(0, 1), line.substring(2)))
+          .collect(Collectors.toList());
     } catch (Exception ex) {
       ex.printStackTrace();
       throw new IllegalStateException("Failed to read file");
