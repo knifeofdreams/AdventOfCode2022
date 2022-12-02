@@ -7,98 +7,107 @@ public class RockPaperScissors {
   public int totalScore(List<List<String>> shapes) {
     return shapes
         .stream()
-        .mapToInt(hand -> calculateShapeValue(hand.get(1)) + calculateGameScore(hand))
+        .map(hands -> new Hands(Hand.of(hands.get(0)), Hand.of(hands.get(1))))
+        .mapToInt(hands -> hands.self().value() + hands.self().against(hands.elf()))
         .sum();
   }
 
   public int totalCorrectScore(List<List<String>> shapes) {
     return shapes
         .stream()
-        .mapToInt(hand -> calculateShapeValue(calculateCorrectShape(hand)) + calculateCorrectGameScore(hand.get(1)))
+        .map(hands -> new HandAndResult(Hand.of(hands.get(0)), Result.of(hands.get(1))))
+        .mapToInt(hands -> {
+          Hand reverseEngineeredHand = hands.result().against(hands.hand());
+          return reverseEngineeredHand.value() + hands.result().value();
+        })
         .sum();
   }
 
-  private String calculateCorrectShape(List<String> hands) {
-    if (hands.get(0).equals("A") && hands.get(1).equals("X")) {
-      return "Z";
+  record Hands(Hand elf, Hand self) {}
+  record HandAndResult(Hand hand, Result result) {}
+
+  enum Hand {
+    ROCK, PAPER, SCISSORS;
+
+    public static Hand of(String hand) {
+      return switch (hand) {
+        case "A", "X" -> ROCK;
+        case "B", "Y" -> PAPER;
+        case "C", "Z" -> SCISSORS;
+        default -> throw new IllegalArgumentException("Invalid hand " + hand);
+      };
     }
-    else if (hands.get(0).equals("A") && hands.get(1).equals("Y")) {
-      return "X";
+
+    public int value() {
+      return switch (this) {
+        case ROCK -> 1;
+        case PAPER -> 2;
+        case SCISSORS -> 3;
+      };
     }
-    else if (hands.get(0).equals("A") && hands.get(1).equals("Z")) {
-      return "Y";
-    }
-    else if (hands.get(0).equals("B") && hands.get(1).equals("X")) {
-      return "X";
-    }
-    else if (hands.get(0).equals("B") && hands.get(1).equals("Y")) {
-      return "Y";
-    }
-    else if (hands.get(0).equals("B") && hands.get(1).equals("Z")) {
-      return "Z";
-    }
-    else if (hands.get(0).equals("C") && hands.get(1).equals("X")) {
-      return "Y";
-    }
-    else if (hands.get(0).equals("C") && hands.get(1).equals("Y")) {
-      return "Z";
-    }
-    else if (hands.get(0).equals("C") && hands.get(1).equals("Z")) {
-      return "X";
-    }
-    else {
-      throw new IllegalArgumentException("Non-existing hand");
+
+    public int against(Hand other) {
+      return switch (this) {
+        case ROCK ->
+           switch (other) {
+            case ROCK ->  3;
+            case PAPER ->  0;
+            case SCISSORS ->  6;
+          };
+
+        case PAPER ->
+           switch (other) {
+            case ROCK -> 6;
+            case PAPER -> 3;
+            case SCISSORS -> 0;
+          };
+
+        case SCISSORS ->
+           switch (other) {
+          case ROCK ->  0;
+          case PAPER ->  6;
+          case SCISSORS ->  3;
+          };
+      };
     }
   }
 
-  private int calculateShapeValue(String shape) {
-    return switch (shape) {
-      case "X" -> 1;
-      case "Y" -> 2;
-      case "Z" -> 3;
-      default -> throw new IllegalArgumentException("Wrong shape");
-    };
-  }
+  enum Result {
+    WIN(6), DRAW(3), LOSE(0);
 
-  private int calculateGameScore(List<String> hands) {
-      if (hands.get(0).equals("A") && hands.get(1).equals("X")) {
-        return 3;
-      }
-      else if (hands.get(0).equals("B") && hands.get(1).equals("Y")) {
-        return 3;
-      }
-      else if (hands.get(0).equals("C") && hands.get(1).equals("Z")) {
-        return 3;
-      }
-      else if (hands.get(0).equals("A") && hands.get(1).equals("Z")) {
-        return 0;
-      }
-      else if (hands.get(0).equals("B") && hands.get(1).equals("X")) {
-        return 0;
-      }
-      else if (hands.get(0).equals("C") && hands.get(1).equals("Y")) {
-        return 0;
-      }
-      else if (hands.get(0).equals("A") && hands.get(1).equals("Y")) {
-        return 6;
-      }
-      else if (hands.get(0).equals("B") && hands.get(1).equals("Z")) {
-        return 6;
-      }
-      else if (hands.get(0).equals("C") && hands.get(1).equals("X")) {
-        return 6;
-      }
-      else {
-        throw new IllegalArgumentException("Non-existing hand");
+    private int resultValue;
+
+    Result(int resultValue) {
+      this.resultValue = resultValue;
     }
-  }
 
-  private int calculateCorrectGameScore(String result) {
-    return switch (result) {
-      case "X" -> 0;
-      case "Y" -> 3;
-      case "Z" -> 6;
-      default -> throw new IllegalArgumentException("Non-existing result");
-    };
+    public int value() {
+      return resultValue;
+    }
+
+    public static Result of(String result) {
+      return switch(result) {
+          case "X" -> LOSE;
+          case "Y" -> DRAW;
+          case "Z" -> WIN;
+        default -> throw new IllegalArgumentException("Invalid result " + result);
+      };
+    }
+
+    public Hand against(Hand other) {
+      return switch(this) {
+        case WIN -> switch (other) {
+          case ROCK -> Hand.PAPER;
+          case PAPER -> Hand.SCISSORS;
+          case SCISSORS -> Hand.ROCK;
+        };
+        case DRAW -> other;
+        case LOSE -> switch (other) {
+          case ROCK -> Hand.SCISSORS;
+          case PAPER -> Hand.ROCK;
+          case SCISSORS -> Hand.PAPER;
+        };
+      };
+    }
   }
 }
