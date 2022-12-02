@@ -4,18 +4,59 @@ import java.util.List;
 
 public class RockPaperScissors {
 
-  public int totalScore(List<List<String>> hands) {
-    return hands.stream()
-        .mapToInt(hand -> calculateHandValue(hand.get(1)) + calculateGameScore(hand))
+  public int totalScore(List<List<String>> shapes) {
+    return shapes
+        .stream()
+        .mapToInt(hand -> calculateShapeValue(hand.get(1)) + calculateGameScore(hand))
         .sum();
   }
 
-  private int calculateHandValue(String hand) {
-    return switch (hand) {
+  public int totalCorrectScore(List<List<String>> shapes) {
+    return shapes
+        .stream()
+        .mapToInt(hand -> calculateShapeValue(calculateCorrectShape(hand)) + calculateCorrectGameScore(hand.get(1)))
+        .sum();
+  }
+
+  private String calculateCorrectShape(List<String> hands) {
+    if (hands.get(0).equals("A") && hands.get(1).equals("X")) {
+      return "Z";
+    }
+    else if (hands.get(0).equals("A") && hands.get(1).equals("Y")) {
+      return "X";
+    }
+    else if (hands.get(0).equals("A") && hands.get(1).equals("Z")) {
+      return "Y";
+    }
+    else if (hands.get(0).equals("B") && hands.get(1).equals("X")) {
+      return "X";
+    }
+    else if (hands.get(0).equals("B") && hands.get(1).equals("Y")) {
+      return "Y";
+    }
+    else if (hands.get(0).equals("B") && hands.get(1).equals("Z")) {
+      return "Z";
+    }
+    else if (hands.get(0).equals("C") && hands.get(1).equals("X")) {
+      return "Y";
+    }
+    else if (hands.get(0).equals("C") && hands.get(1).equals("Y")) {
+      return "Z";
+    }
+    else if (hands.get(0).equals("C") && hands.get(1).equals("Z")) {
+      return "X";
+    }
+    else {
+      throw new IllegalArgumentException("Non-existing hand");
+    }
+  }
+
+  private int calculateShapeValue(String shape) {
+    return switch (shape) {
       case "X" -> 1;
       case "Y" -> 2;
       case "Z" -> 3;
-      default -> throw new IllegalArgumentException("Wrong hand");
+      default -> throw new IllegalArgumentException("Wrong shape");
     };
   }
 
@@ -50,5 +91,14 @@ public class RockPaperScissors {
       else {
         throw new IllegalArgumentException("Non-existing hand");
     }
+  }
+
+  private int calculateCorrectGameScore(String result) {
+    return switch (result) {
+      case "X" -> 0;
+      case "Y" -> 3;
+      case "Z" -> 6;
+      default -> throw new IllegalArgumentException("Non-existing result");
+    };
   }
 }
