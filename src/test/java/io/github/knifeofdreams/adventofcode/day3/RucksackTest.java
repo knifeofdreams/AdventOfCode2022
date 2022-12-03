@@ -38,7 +38,7 @@ class RucksackTest {
   class GroupBadges {
     @Test
     public void sumsBadgePrioritiesForGroups() {
-      assertEquals(70, rucksack.groupBadgePriorities(ITEMS));
+      assertEquals(70, rucksack.groupBadgePriorities(EXAMPLE_ITEMS));
     }
   }
 
