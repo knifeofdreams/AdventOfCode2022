@@ -31,8 +31,7 @@ public class Rucksack {
     for (String item : items) {
       if (g.size() < 3) {
         g.add(item);
-      }
-      else {
+      } else {
         groups.add(g);
         g = new ArrayList<>();
         g.add(item);
@@ -51,39 +50,41 @@ public class Rucksack {
       sortedGroups.add(sortedItems);
     }
 
-    var sharedItems = new ArrayList<>();
-      for (ArrayList<String> contents : sortedGroups) {
-        var first = contents.get(0);
-        var second = contents.get(1);
-        var third = contents.get(2);
+    var sharedItems = new ArrayList<String>();
+    for (ArrayList<String> contents : sortedGroups) {
+      var first = contents.get(0);
+      var second = contents.get(1);
+      var third = contents.get(2);
 
-        String sharedFirstSecond = getDuplicatedItems(first, second);
-        String shared = getDuplicatedItems(sharedFirstSecond, third);
+      String sharedFirstSecond = getDuplicatedItems(first, second);
+      String shared = getDuplicatedItems(sharedFirstSecond, third);
 
-        sharedItems.add(shared);
-      }
+      sharedItems.add(shared);
+    }
 
-    return 0;
+    var res = 0;
+    for (String s : sharedItems) {
+      res += calculatePriority(s.charAt(0));
+    }
+    return res;
   }
 
   private String getDuplicatedItems(String first, String second) {
     var shared = new HashSet<String>();
     var i = 0;
     var j = 0;
-    while(i < first.length() && j < second.length()) {
-      if(first.charAt(i) == second.charAt(j)) {
+    while (i < first.length() && j < second.length()) {
+      if (first.charAt(i) == second.charAt(j)) {
         shared.add(Character.toString(first.charAt(i)));
         i += 1;
-      }
-      else if (first.charAt(i) < second.charAt(j)) {
+      } else if (first.charAt(i) < second.charAt(j)) {
         i += 1;
-      }
-      else {
+      } else {
         j += 1;
       }
     }
     var str = new StringBuilder();
-    for (String s: shared) {
+    for (String s : shared) {
       str.append(s);
     }
     String s = str.toString();

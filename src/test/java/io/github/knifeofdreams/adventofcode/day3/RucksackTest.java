@@ -40,6 +40,11 @@ class RucksackTest {
     public void sumsBadgePrioritiesForGroups() {
       assertEquals(70, rucksack.groupBadgePriorities(EXAMPLE_ITEMS));
     }
+
+    @Test
+    public void sumsBadgePrioritiesForGroupsForMyInput() {
+      assertEquals(2864, rucksack.groupBadgePriorities(ITEMS));
+    }
   }
 
   private static List<String> readInput() {
