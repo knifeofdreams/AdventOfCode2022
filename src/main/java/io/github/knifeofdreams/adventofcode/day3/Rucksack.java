@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Rucksack {
 
@@ -25,7 +26,29 @@ public class Rucksack {
         .sum();
   }
 
-  public int groupBadgePriorities(List<String> items) {
+  public int groupBadgePriorities(List<String> contents) {
+    List<List<String>> groups = groupByThree(contents);
+
+    return groups.stream()
+        .map(group -> group.stream()
+            .map(this::sortString)
+            .collect(Collectors.toList()))
+        .map(group -> {
+            var first = group.get(0);
+            var second = group.get(1);
+            var third = group.get(2);
+
+            String sharedFirstSecond = getDuplicatedItems(first, second);
+            String shared = getDuplicatedItems(sharedFirstSecond, third);
+
+            return shared;
+        })
+        .map(sharedItem -> sharedItem.charAt(0))
+        .mapToInt(this::calculatePriority)
+        .sum();
+  }
+
+  private List<List<String>> groupByThree(List<String> items) {
     var groups = new ArrayList<List<String>>();
     var g = new ArrayList<String>();
     for (String item : items) {
@@ -38,35 +61,14 @@ public class Rucksack {
       }
     }
     groups.add(g);
+    return groups;
+  }
 
-    var sortedGroups = new ArrayList<ArrayList<String>>();
-    for (List<String> group : groups) {
-      var sortedItems = new ArrayList<String>();
-      for (String contents : group) {
-        char[] chars = contents.toCharArray();
-        Arrays.sort(chars);
-        sortedItems.add(new String(chars));
-      }
-      sortedGroups.add(sortedItems);
-    }
-
-    var sharedItems = new ArrayList<String>();
-    for (ArrayList<String> contents : sortedGroups) {
-      var first = contents.get(0);
-      var second = contents.get(1);
-      var third = contents.get(2);
-
-      String sharedFirstSecond = getDuplicatedItems(first, second);
-      String shared = getDuplicatedItems(sharedFirstSecond, third);
-
-      sharedItems.add(shared);
-    }
-
-    var res = 0;
-    for (String s : sharedItems) {
-      res += calculatePriority(s.charAt(0));
-    }
-    return res;
+  private String sortString(String contents) {
+    char[] chars = contents.toCharArray();
+    Arrays.sort(chars);
+    String sortedString = new String(chars);
+    return sortedString;
   }
 
   private String getDuplicatedItems(String first, String second) {
