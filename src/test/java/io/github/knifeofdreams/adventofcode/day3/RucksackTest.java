@@ -25,12 +25,12 @@ class RucksackTest {
 
     @Test
     public void returnsSumOfPriorities() {
-      assertEquals(157, rucksack.sumOfPriorities(EXAMPLE_ITEMS));
+      assertEquals(157, rucksack.sumOfPriorities2(EXAMPLE_ITEMS));
     }
 
     @Test
     public void returnsSumOfPrioritiesForMyInput() {
-      assertEquals(8202, rucksack.sumOfPriorities(ITEMS));
+      assertEquals(8202, rucksack.sumOfPriorities2(ITEMS));
     }
   }
 

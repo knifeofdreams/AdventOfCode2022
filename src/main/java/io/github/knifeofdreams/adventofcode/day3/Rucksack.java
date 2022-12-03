@@ -2,6 +2,7 @@ package io.github.knifeofdreams.adventofcode.day3;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 public class Rucksack {
@@ -37,7 +38,7 @@ public class Rucksack {
     throw new IllegalArgumentException("No duplicate characters in string");
   }
 
-  private int calculatePriority(Character character) {
+  private int calculatePriority(char character) {
     if (character >= 'a' && character <= 'z') {
       return character - 'a' + 1;
     }
@@ -90,5 +91,27 @@ public class Rucksack {
         })
         .mapToInt(this::calculatePriority)
         .sum();
+  }
+
+  public int sumOfPriorities2(List<String> allItems) {
+    return allItems.stream()
+        .mapToInt(
+            items -> {
+              var fullSet = new HashSet<Character>();
+              for (int i = 0; i < items.length() / 2; i++) {
+                fullSet.add(items.charAt(i));
+              }
+              for (int i = items.length() / 2; i < items.length(); i++) {
+                if (fullSet.contains(items.charAt(i))) {
+                  return calculatePriority(items.charAt(i));
+                }
+              }
+              throw new IllegalArgumentException("No duplicate items found between: " + items);
+            })
+        .sum();
+  }
+
+  public int groupBadgePriorities2(List<String> items) {
+    return 0;
   }
 }
