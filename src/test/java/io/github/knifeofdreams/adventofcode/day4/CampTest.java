@@ -47,7 +47,7 @@ class CampTest {
 
     @Test
     public void findPartiallyContainedPairsForMyInput() {
-      assertEquals(0, camp.numberOfPartialOverlaps(PAIRS));
+      assertEquals(837, camp.numberOfPartialOverlaps(PAIRS));
     }
   }
 
