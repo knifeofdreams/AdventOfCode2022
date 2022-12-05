@@ -7,6 +7,7 @@ import java.util.List;
 public class SupplyStacks {
 
   public String rearrange(ArrayList<ArrayList<String>> stacks, List<List<Integer>> moves) {
+    // TODO linked lists!!!
     for (List<Integer> move : moves) {
       var pieces = move.get(0);
       var from = move.get(1);
