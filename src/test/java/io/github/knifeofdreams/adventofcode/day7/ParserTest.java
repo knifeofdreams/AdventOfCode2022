@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 
-class FileSystemTest {
+class ParserTest {
 
   @Test
   public void sumOfTotalSizes() {
