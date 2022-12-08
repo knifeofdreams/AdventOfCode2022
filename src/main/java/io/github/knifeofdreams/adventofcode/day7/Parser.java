@@ -4,14 +4,15 @@ import static io.github.knifeofdreams.adventofcode.day7.Parser.Type.*;
 
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Parser {
 
   public long sumOfAllsizes(Node node) {
+    var sum = 0L;
     var visited = new ArrayList<>();
     var stack = new ArrayList<Node>();
     stack.add(node);
-    var sum = 0L;
 
     while (!stack.isEmpty()) {
       var n = stack.remove(stack.size() - 1);
@@ -31,6 +32,39 @@ public class Parser {
       }
     }
     return sum;
+  }
+
+  public int folderToDelete(Node node) {
+    var root = node;
+    var sum = 0L;
+    var visited = new ArrayList<Node>();
+    var stack = new ArrayList<Node>();
+    stack.add(node);
+
+    while (!stack.isEmpty()) {
+      var n = stack.remove(stack.size() - 1);
+      if (n.type == FOLDER && n.getSize() <= 100000) {
+        sum += n.getSize();
+      }
+      System.out.println(n);
+      visited.add(n);
+
+      if (n.type == FILE || n.children == null) {
+        continue;
+      }
+      for (Node c : n.children) {
+        if (!visited.contains(c)) {
+          stack.add(c);
+        }
+      }
+    }
+    var targetSize = 30000000 - (70000000 - root.getSize());
+    return visited.stream()
+        .filter(n -> (n.type == FOLDER))
+        .filter(n -> n.getSize() >= targetSize)
+        .map(n -> n.getSize())
+        .min(Integer::compare)
+        .get();
   }
 
   static class Node {
