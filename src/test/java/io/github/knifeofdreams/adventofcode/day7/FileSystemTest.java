@@ -1,5 +1,7 @@
 package io.github.knifeofdreams.adventofcode.day7;
 
+import static io.github.knifeofdreams.adventofcode.day7.Parser.Type.FILE;
+import static io.github.knifeofdreams.adventofcode.day7.Parser.Type.FOLDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.github.knifeofdreams.adventofcode.day7.Parser.Node;
@@ -17,24 +19,24 @@ class FileSystemTest {
         createTree(
             List.of(
                 //        "$ cd /",
-                "$ ls",
-                "dir a",
+                //                "$ ls",
+                //                "dir a",
                 "14848514 b.txt",
                 "8504156 c.dat",
-                "dir d",
+                //                "dir d",
                 "$ cd a",
-                "$ ls",
-                "dir e",
+                //                "$ ls",
+                //                "dir e",
                 "29116 f",
                 "2557 g",
                 "62596 h.lst",
                 "$ cd e",
-                "$ ls",
+                //                "$ ls",
                 "584 i",
                 "$ cd ..",
                 "$ cd ..",
                 "$ cd d",
-                "$ ls",
+                //                "$ ls",
                 "4060174 j",
                 "8033020 d.log",
                 "5626152 d.ext",
@@ -44,25 +46,35 @@ class FileSystemTest {
   }
 
   private Node createTree(List<String> commands) {
-    Node root = new Node(0, "/", null, new HashSet<>());
+    Node root = new Node(0, "/", null, FOLDER, new HashSet<>());
     Node node = root;
-    //    Pattern cdFolder = Pattern.compile("\\$ cd (.*)");
     Pattern cdFolder = Pattern.compile("\\$ cd ([a-zA-Z]+)");
     Pattern cdUp = Pattern.compile("\\$ cd \\.\\.");
+    Pattern filePattern = Pattern.compile("(\\d+) (.*)");
     var x = new ArrayList<>();
 
     for (String command : commands) {
       var folderMatcher = cdFolder.matcher(command);
       var upMatcher = cdUp.matcher(command);
+      var fileMatcher = filePattern.matcher(command);
       if (folderMatcher.matches()) {
-        var tmp = new Node(0, folderMatcher.group(1), null, new HashSet<>());
+        var tmp = new Node(0, folderMatcher.group(1), null, FOLDER, new HashSet<>());
         node.children.add(tmp);
         tmp.parent = node;
         node = tmp;
         x.add(node);
-      }
-      else if (upMatcher.matches()) {
+      } else if (upMatcher.matches()) {
         node = node.parent;
+      } else if (fileMatcher.matches()) {
+        var size = Integer.parseInt(fileMatcher.group(1));
+        var name = fileMatcher.group(2);
+        var tmp = new Node(size, name, node, FILE, new HashSet<>());
+        node.children.add(tmp);
+        tmp.parent = node;
+        //        node = tmp;
+        x.add(node);
+      } else {
+        throw new IllegalStateException("Could not parse command: " + command);
       }
     }
 
