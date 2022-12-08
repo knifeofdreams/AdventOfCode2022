@@ -15,10 +15,10 @@ public class Parser {
 
     while (!stack.isEmpty()) {
       var n = stack.remove(stack.size() - 1);
-      if (n.type == FOLDER && n.getSize() < 100000) {
+      if (n.type == FOLDER && n.getSize() <= 100000) {
         sum += n.getSize();
       }
-      System.out.println("node: " + n.size + " " + n.name);
+      System.out.println(n);
       visited.add(n);
 
       if (n.type == FILE || n.children == null) {
@@ -54,6 +54,20 @@ public class Parser {
         return size;
       }
       return children.stream().mapToInt(Node::getSize).sum();
+    }
+
+    public String toString() {
+      var builder = new StringBuilder();
+      var tmp = parent;
+      while (tmp != null) {
+        builder.insert(0,"/")
+            .insert(0, tmp.name);
+        tmp = tmp.parent;
+      }
+      builder.append(name)
+          .append(" ")
+          .append(getSize());
+      return builder.toString();
     }
   }
 
