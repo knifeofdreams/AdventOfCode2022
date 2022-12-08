@@ -18,25 +18,17 @@ class ParserTest {
     var rootNode =
         createTree(
             List.of(
-                //        "$ cd /",
-                //                "$ ls",
-                //                "dir a",
                 "14848514 b.txt",
                 "8504156 c.dat",
-                //                "dir d",
                 "$ cd a",
-                //                "$ ls",
-                //                "dir e",
                 "29116 f",
                 "2557 g",
                 "62596 h.lst",
                 "$ cd e",
-                //                "$ ls",
                 "584 i",
                 "$ cd ..",
                 "$ cd ..",
                 "$ cd d",
-                //                "$ ls",
                 "4060174 j",
                 "8033020 d.log",
                 "5626152 d.ext",
@@ -68,10 +60,9 @@ class ParserTest {
       } else if (fileMatcher.matches()) {
         var size = Integer.parseInt(fileMatcher.group(1));
         var name = fileMatcher.group(2);
-        var tmp = new Node(size, name, node, FILE, new HashSet<>());
+        var tmp = new Node(size, name, node, FILE, null);
         node.children.add(tmp);
         tmp.parent = node;
-        //        node = tmp;
         x.add(node);
       } else {
         throw new IllegalStateException("Could not parse command: " + command);
