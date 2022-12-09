@@ -2,49 +2,50 @@ package io.github.knifeofdreams.adventofcode.day8;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import io.github.knifeofdreams.adventofcode.day8.TreeHouse.Tree;
+import java.io.BufferedReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 
 class TreeHouseTest {
 
   @Test
   public void returnsNoOfVisibleTeas() {
-    var grid = List.of(
-        List.of(3,0,3,7,3),
-        List.of(2,5,5,1,2),
-        List.of(6,5,3,3,2),
-        List.of(3,3,5,4,9),
-        List.of(3,5,3,9,0)
-    );
+    var grid = readInput("day8/day8-testinput.txt");
     var treeHouse = new TreeHouse();
     assertEquals(21, treeHouse.visibleTrees(grid));
   }
 
   @Test
   public void returnsNoOfVisibleTeasForMyInput() {
-    var grid = readInput();
+    var grid = readInput("day8/day8-input.txt");
     var treeHouse = new TreeHouse();
-    assertEquals(0, treeHouse.visibleTrees(grid));
+    assertEquals(1827, treeHouse.visibleTrees(grid));
   }
 
-  private List<List<Integer>> readInput() {
-    try (Stream<String> input =
-        Files.lines(Path.of(ClassLoader.getSystemResource("day8/day8-input.txt").toURI()))) {
-      return input
-          .map(line ->
-            Stream.of(line.split(""))
-                .map(String::trim)
-                .map(Integer::parseInt)
-                .collect(Collectors.toList())
-          )
-          .collect(Collectors.toList());
+  private List<List<Tree>> readInput(String filename) {
+    List<List<Tree>> rows = new ArrayList<>();
+    try (BufferedReader in =
+        Files.newBufferedReader(Path.of(ClassLoader.getSystemResource(filename).toURI()))) {
+
+      String line;
+      while ((line = in.readLine()) != null) {
+        List<Tree> columns = new ArrayList<>();
+        for (int i = 0; i < line.length(); i++) {
+          int height = Character.digit(line.charAt(i), 10);
+          columns.add(new Tree(height, rows.size(), i, false));
+        }
+        rows.add(columns);
+      }
+
     } catch (Exception ex) {
       ex.printStackTrace();
       throw new IllegalStateException("Failed to read file");
     }
+
+    return rows;
   }
 }
