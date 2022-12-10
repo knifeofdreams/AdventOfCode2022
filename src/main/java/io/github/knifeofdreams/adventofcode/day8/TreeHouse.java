@@ -2,92 +2,84 @@ package io.github.knifeofdreams.adventofcode.day8;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Stream;
 
 public class TreeHouse {
 
-  static final class Tree {
+  public int scenicScore(List<List<Tree>> grid) {
+    int maxScenicScore = 0;
+    for (int row = 0; row < grid.size(); row++) {
+      for (int column = 0; column < grid.get(0).size(); column++) {
+        var height = grid.get(row).get(column).height;
+        var upScenicScore = 0;
+        var downScenicScore = 0;
+        var leftScenicScore = 0;
+        var rightScenicScore = 0;
 
-    public final int height;
-    public final int row;
-    public final int column;
-    public boolean seen;
+        // look up
+        var r = row - 1;
+        while (r >= 0) {
+          int h = grid.get(r).get(column).height;
+          if (h >= height) {
+            upScenicScore += 1;
+            break;
+          } else {
+            upScenicScore += 1;
+            r -= 1;
+          }
+        }
 
-    Tree(int height, int row, int column, boolean seen) {
-      this.height = height;
-      this.row = row;
-      this.column = column;
-      this.seen = seen;
+        // look down
+        r = row + 1;
+        while (r <= grid.size() - 1) {
+          int h = grid.get(r).get(column).height;
+          if (h >= height) {
+            downScenicScore += 1;
+            break;
+          } else {
+            downScenicScore += 1;
+            r += 1;
+          }
+        }
+
+        // look left
+        var c = column - 1;
+        while (c >= 0) {
+          int h = grid.get(row).get(c).height;
+          if (h >= height) {
+            leftScenicScore += 1;
+            break;
+          } else {
+            leftScenicScore += 1;
+            c -= 1;
+          }
+        }
+
+        // look right
+        c = column + 1;
+        while (c <= grid.get(0).size() - 1) {
+          int h = grid.get(row).get(c).height;
+          if (h >= height) {
+            rightScenicScore += 1;
+            break;
+          } else {
+            rightScenicScore += 1;
+            c += 1;
+          }
+        }
+
+        if ((leftScenicScore * rightScenicScore * upScenicScore * downScenicScore) > maxScenicScore) {
+          maxScenicScore = leftScenicScore * rightScenicScore * upScenicScore * downScenicScore;
+        }
+      }
     }
-
-    public int height() {
-      return height;
-    }
-
-    public int row() {
-      return row;
-    }
-
-    public int column() {
-      return column;
-    }
-
-    public boolean seen() {
-      return seen;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (obj == this) return true;
-      if (obj == null || obj.getClass() != this.getClass()) return false;
-      var that = (Tree) obj;
-      return this.height == that.height
-          && this.row == that.row
-          && this.column == that.column
-          && this.seen == that.seen;
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(height, row, column, seen);
-    }
-
-    @Override
-    public String toString() {
-      return "Tree[" + "height=" + height + ", " + "row=" + row + ", " + "column=" + column + ", "
-          + "seen=" + seen + ']';
-    }
+    return maxScenicScore;
   }
 
   public int visibleTrees(List<List<Tree>> grid) {
     var visible = 0;
     var visibleTrees = new ArrayList<>();
 
-    //      var left = 0;
-    //      var right = row.size() - 1;
-    //      var leftMax = -1;
-    //      var rightMax = -1;
-    //
-    //      // TODO condition is not when the pointers meet but when the max heights become the same
-    //      while (left <= right) {
-    //        if (row.get(left).height > leftMax) {
-    //          leftMax = row.get(left).height;
-    //          if (!row.get(left).seen) {
-    //            visible += 1;
-    //            visibleTrees.add(row.get(left));
-    //          }
-    //        }
-    //        if (row.get(right).height > rightMax) {
-    //          rightMax = row.get(right).height;
-    //          if (!row.get(right).seen) {
-    //            visible += 1;
-    //            visibleTrees.add(row.get(right));
-    //          }
-    //        }
-    //        left += 1;
-    //        right -= 1;
-    //      }
-    //    }
     for (List<Tree> row : grid) {
       var minHeight = -1;
       for (Tree tree : row) {
@@ -145,31 +137,6 @@ public class TreeHouse {
         }
       }
     }
-    //    for (ArrayList<Tree> row : transposedGrid) {
-    //      var left = 0;
-    //      var right = row.size() - 1;
-    //      var leftMax = -1;
-    //      var rightMax = -1;
-    //
-    //      while (left <= right) {
-    //        if (row.get(left).height > leftMax) {
-    //          leftMax = row.get(left).height;
-    //          if (!row.get(left).seen) {
-    //            visible += 1;
-    //            visibleTrees.add(row.get(left));
-    //          }
-    //        }
-    //        if (row.get(right).height > rightMax) {
-    //          rightMax = row.get(right).height;
-    //          if (!row.get(right).seen) {
-    //            visible += 1;
-    //            visibleTrees.add(row.get(right));
-    //          }
-    //        }
-    //        left += 1;
-    //        right -= 1;
-    //      }
-    //    }
 
     return visible;
   }
@@ -180,7 +147,6 @@ public class TreeHouse {
     for (int row = 0; row < grid.size(); row++) {
       var transposedRow = new ArrayList<Tree>();
       for (int column = 0; column < grid.get(0).size(); column++) {
-        //        transposedRow.add(grid.get(column).get(row));
         transposedRow.add(
             new Tree(
                 grid.get(column).get(row).height, column, row, grid.get(column).get(row).seen));
