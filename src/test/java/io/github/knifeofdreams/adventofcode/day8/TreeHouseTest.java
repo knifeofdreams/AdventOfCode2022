@@ -36,7 +36,7 @@ class TreeHouseTest {
   public void returnsScenicScoreForMyInput() {
     var grid = readInput("day8/day8-input.txt");
     var treeHouse = new TreeHouse();
-    assertEquals(0, treeHouse.scenicScore(grid));
+    assertEquals(335580, treeHouse.scenicScore(grid));
   }
 
   private List<List<Tree>> readInput(String filename) {
