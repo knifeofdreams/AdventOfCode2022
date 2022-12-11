@@ -2,9 +2,9 @@ package io.github.knifeofdreams.adventofcode.day9;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import io.github.knifeofdreams.adventofcode.day9.Rope.Move;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -20,7 +20,7 @@ class RopeTest {
     assertEquals(13, rope.visitedFieldCount(headMoves));
   }
 
-  private List<Move> readInput(String file) {
+  private List<String> readInput(String file) {
     try (Stream<String> input =
         Files.lines(Path.of(ClassLoader.getSystemResource(file).toURI()))) {
       var pattern = Pattern.compile("(\\w) (\\d+)");
@@ -33,8 +33,13 @@ class RopeTest {
                 }
                 var direction = matcher.group(1);
                 var steps = Integer.parseInt(matcher.group(2));
-                return new Move(direction, steps);
+                var result = new ArrayList<String>();
+                for (int i = 0; i < steps; i++) {
+                  result.add(direction);
+                }
+                return result;
               })
+          .flatMap(List::stream)
           .collect(Collectors.toList());
     } catch (Exception ex) {
       ex.printStackTrace();

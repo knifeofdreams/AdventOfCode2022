@@ -4,9 +4,9 @@ import java.util.List;
 
 public class Rope {
 
-  record Move(String direction, Integer steps) {}
+  record Position(Integer x, Integer y) {}
 
-  public int visitedFieldCount(List<Move> moves) {
+  public int visitedFieldCount(List<String> moves) {
     return 0;
   }
 }
