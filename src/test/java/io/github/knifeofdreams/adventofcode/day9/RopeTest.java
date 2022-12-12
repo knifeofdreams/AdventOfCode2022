@@ -20,6 +20,13 @@ class RopeTest {
     assertEquals(13, rope.visitedFieldCount(headMoves));
   }
 
+  @Test
+  public void returnsCountOfVisitedFieldsForMyInput() {
+    var headMoves = readInput("day9/day9-input.txt");
+    var rope = new Rope();
+    assertEquals(0, rope.visitedFieldCount(headMoves));
+  }
+
   private List<String> readInput(String file) {
     try (Stream<String> input =
         Files.lines(Path.of(ClassLoader.getSystemResource(file).toURI()))) {
